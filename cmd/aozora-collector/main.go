@@ -58,7 +58,7 @@ func findAuthorAndZIP(siteURL string) (string, string) {
 		return "", ""
 	}
 
-	author := doc.Find("table[summary=作家データ] tr:nth-child(1) td:nth-child(2)").Text()
+	author := doc.Find("table[summary=作家データ] tr:nth-child(2) td:nth-child(2)").First().Text()
 
 	zipURL := ""
 	doc.Find("table.download a").Each(func(n int, elem *goquery.Selection) {
