@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -106,7 +106,7 @@ func extractText(zipURL string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -122,7 +122,7 @@ func extractText(zipURL string) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			b, err := ioutil.ReadAll(f)
+			b, err := io.ReadAll(f)
 			f.Close()
 			if err != nil {
 				return "", err
