@@ -17,7 +17,7 @@ type Entry struct {
 	Author   string
 	TitleID  string
 	Title    string
-	InfoURL  string
+	SiteURL  string
 	ZipURL   string
 }
 
@@ -34,16 +34,27 @@ func findEntries(siteURL string) ([]Entry, error) {
 	}
 	// 処理
 	pat := regexp.MustCompile(`.*/cards/([0-9]+)/card([0-9]+).html$`)
+	entries := []Entry{}
 	doc.Find("ol li a").Each(func(n int, elem *goquery.Selection) {
 		token := pat.FindStringSubmatch(elem.AttrOr("href", ""))
 		if len(token) != 3 {
 			return
 		}
+		title := elem.Text()
 		pageURL := fmt.Sprintf("https://www.aozora.gr.jp/cards/%s/card%s.html", token[1], token[2])
-		_, zipURL := findAuthorAndZIP(pageURL)
-		println(zipURL)
+		author, zipURL := findAuthorAndZIP(pageURL)
+		if zipURL != "" {
+			entries = append(entries, Entry{
+				AuthorID: token[1],
+				Author:   author,
+				TitleID:  token[2],
+				Title:    title,
+				SiteURL:  siteURL,
+				ZipURL:   zipURL,
+			})
+		}
 	})
-	return nil, nil
+	return entries, nil
 }
 
 func findAuthorAndZIP(siteURL string) (string, string) {
