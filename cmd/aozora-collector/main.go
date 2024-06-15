@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"regexp"
 
 	"github.com/PuerkitoBio/goquery"
@@ -18,7 +19,13 @@ type Entry struct {
 }
 
 func findEntries(siteURL string) ([]Entry, error) {
-	doc, err := goquery.NewDocument(siteURL)
+	res, err := http.Get(siteURL)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return nil, err
 	}
