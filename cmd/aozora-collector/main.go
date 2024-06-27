@@ -43,7 +43,7 @@ func findEntries(siteURL string) ([]Entry, error) {
 	}
 	// 処理
 	pat := regexp.MustCompile(`.*/cards/([0-9]+)/card([0-9]+).html$`)
-	entries := []Entry{}
+	var entries []Entry
 	doc.Find("ol li a").Each(func(n int, elem *goquery.Selection) {
 		token := pat.FindStringSubmatch(elem.AttrOr("href", ""))
 		if len(token) != 3 {
