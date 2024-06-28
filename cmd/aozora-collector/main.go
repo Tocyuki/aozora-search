@@ -187,7 +187,7 @@ func addEntry(db *sql.DB, entry *Entry, content string) error {
 
 	seg := t.Wakati(content)
 	_, err = db.Exec(`
-		REPLACE INTO contents_fts(words) values(?)
+		REPLACE INTO contents_fts(docid, words) values(?, ?)
 	`, docID, strings.Join(seg, " "))
 	if err != nil {
 		return nil
