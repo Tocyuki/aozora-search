@@ -64,6 +64,24 @@ func showTitles(db *sql.DB, authorID string) error {
 	return nil
 }
 
+func showContent(db *sql.DB, authorID string, titleID string) error {
+	var content string
+	err := db.QueryRow(`
+	SELECT
+		c.content
+	FROM
+		contents c
+	WHERE
+		c.author_id = ?
+	AND c.title_id = ?
+	`, authorID, titleID).Scan(&content)
+	if err != nil {
+		return err
+	}
+	fmt.Println(content)
+	return nil
+}
+
 const usage = `
 Usage of ./aozora-search [sub-command] [...]:
   -d string
@@ -104,6 +122,12 @@ func main() {
 			os.Exit(2)
 		}
 		err = showTitles(db, flag.Arg(1))
+	case "content":
+		if flag.NArg() != 3 {
+			flag.Usage()
+			os.Exit(2)
+		}
+		err = showContent(db, flag.Arg(1), flag.Arg(2))
 	}
 
 	if err != nil {
