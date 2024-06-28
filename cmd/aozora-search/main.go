@@ -36,6 +36,34 @@ func showAuthors(db *sql.DB) error {
 	return nil
 }
 
+func showTitles(db *sql.DB, authorID string) error {
+	rows, err := db.Query(`
+	SELECT
+		c.title_id,
+		c.title
+	FROM
+		contents c
+	WHERE
+		c.author_id = ?
+	ORDER BY
+		CAST(c.author_id AS INTEGER)
+	`, authorID)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var titleID, title string
+		err = rows.Scan(&titleID, &title)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("% 5s: %s\n", titleID, title)
+	}
+	return nil
+}
+
 const usage = `
 Usage of ./aozora-search [sub-command] [...]:
   -d string
@@ -70,6 +98,12 @@ func main() {
 	switch flag.Arg(0) {
 	case "authors":
 		err = showAuthors(db)
+	case "titles":
+		if flag.NArg() != 2 {
+			flag.Usage()
+			os.Exit(2)
+		}
+		err = showTitles(db, flag.Arg(1))
 	}
 
 	if err != nil {
