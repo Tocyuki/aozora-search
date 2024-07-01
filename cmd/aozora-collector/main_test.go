@@ -10,6 +10,8 @@ import (
 )
 
 func TestFindEntries(t *testing.T) {
+	t.Parallel()
+
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(r.URL.String())
 		if r.URL.String() == "/" {
@@ -93,6 +95,8 @@ func TestFindEntries(t *testing.T) {
 }
 
 func TestExtractText(t *testing.T) {
+	t.Parallel()
+
 	ts := httptest.NewServer(http.FileServer(http.Dir(".")))
 	defer ts.Close()
 
